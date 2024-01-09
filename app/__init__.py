@@ -4,7 +4,7 @@ from flask_socketio import SocketIO
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-from . import socketio, routes  # Import routes and socketio instance
+from . import socketio # Import socketio after creating the app instance
 
 def stock_price_update_task():
     while True:
