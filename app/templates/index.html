@@ -1,21 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Stock Market Simulator</title>
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js" integrity="sha384-mZLF4UVrpi/QTWPA7BjNPEnkIfRFn4ZEO3Qt/HFklTJBj/gBOV8G3HcKn4NfQblz" crossorigin="anonymous"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"
+        integrity="sha384-mZLF4UVrpi/QTWPA7BjNPEnkIfRFn4ZEO3Qt/HFklTJBj/gBOV8G3HcKn4NfQblz"
+        crossorigin="anonymous"></script>
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', (event) => {
             var socket = io.connect('http://' + document.domain + ':' + location.port);
 
-            socket.on('stock_prices', function(prices) {
-                document.getElementById('stockPrices').innerHTML = JSON.stringify(prices, null, 2);
+            socket.on('stock_prices', function (prices) {
+                // Mesure time since last update
+                var now = new Date();
+                var time = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+
+                // Update the DOM
+                document.getElementById('stockPrices').innerHTML = "Last update: " + time + "\n\n" + JSON.stringify(prices, null, 2);
+
+                socket.on('random_event', function (data) {
+                    console.log('Random Event:', data.message);
+                    document.getElementById('randomEvents').innerHTML = data.message;
+                });
             });
         });
+
+
     </script>
 </head>
+
 <body>
     <h1>Stock Market Simulator</h1>
     <pre id="stockPrices">Waiting for price updates...</pre>
+
+    <h1>Random Events</h1>
+    <pre id="randomEvents">Waiting for random events...</pre>
 </body>
+
 </html>

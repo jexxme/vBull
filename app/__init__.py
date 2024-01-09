@@ -9,7 +9,6 @@ from . import socketio # Import socketio after creating the app instance
 def stock_price_update_task():
     while True:
         routes.update_stock_prices()
-        socketio.sleep(1)  # Sleep for 1 second
 
 if __name__ == '__main__':
     socketio.start_background_task(stock_price_update_task)
