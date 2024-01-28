@@ -1,4 +1,4 @@
-function rsetup() {
+function setup() {
     // Drawn once
     createCanvas(500, 400); // Canvas size
     background(20); // Background color
