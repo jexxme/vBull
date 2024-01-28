@@ -7,7 +7,9 @@
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"
         integrity="sha384-mZLF4UVrpi/QTWPA7BjNPEnkIfRFn4ZEO3Qt/HFklTJBj/gBOV8G3HcKn4NfQblz"
         crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.js"></script>
+    <script src="{{ url_for('static', filename='/libs/p5/p5.min.js') }}"></script> <!-- Maybe swap with CDN: https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.js -->
+    <script src="{{ url_for('static', filename='/p5_sketches/example.js') }}"></script> <!-- The sketch file (canvas) used on the site. Currently an example one. -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='/styles/style.css') }}">
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', (event) => {
             var socket = io.connect('http://' + document.domain + ':' + location.port);
@@ -16,18 +18,17 @@
                 // Mesure time since last update
                 var now = new Date();
                 var time = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
-
+                _step(prices["TechCorp"]);
+                
                 // Update the DOM
                 document.getElementById('stockPrices').innerHTML = "Last update: " + time + "\n\n" + JSON.stringify(prices, null, 2);
-
+                
                 socket.on('random_event', function (data) {
                     console.log('Random Event:', data.message);
                     document.getElementById('randomEvents').innerHTML = data.message;
                 });
             });
         });
-
-
     </script>
     <style>
         html, body {
@@ -50,11 +51,9 @@
     <h1>Random Events</h1>
     <pre id="randomEvents">Waiting for random events...</pre>
 
-    <div id="canvasContainer">
-        <main>
-        </main>
-        <script src="{{ url_for('static', filename='/p5_sketches/example.js') }}"></script> <!-- The sketch file (canvas) used on the site. Currently an example one. -->
-        <input type="button" value="Step" onclick="_step();">
+    <div class="canvas-container" style="">
+        <h2>Stock market price of TechCorp</h2>
+        <main></main> <!-- Apparently p5 canvas snaps to the <main>-tag. -->
     </div>
 </body>
 
