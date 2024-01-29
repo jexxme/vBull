@@ -11,9 +11,8 @@ const s = (sketch) => {
 		// Drawn once
 		sketch.trend = 0;
 		sketch.x = 10;
-		sketch.lastY = -1; // If -1, this will start at the first price given.
+		sketch.lastY = -1; // If -1, this will start drawing the line at the first price given.
 		sketch.createCanvas(canvas_x, canvas_y); // Canvas size
-		
 		
 		sketch.clear_graph();
 	}
