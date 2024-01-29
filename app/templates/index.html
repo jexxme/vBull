@@ -18,8 +18,15 @@
                 // Mesure time since last update
                 var now = new Date();
                 var time = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
-                _step(prices["TechCorp"]);
                 
+                // Update all canvases with the new values
+                cTechCorp._step(prices["TechCorp"])
+                cHealthPlus._step(prices["HealthPlus"])
+                cGreenEnergy._step(prices["GreenEnergy"])
+                cFoodie._step(prices["Foodie"])
+                cFashionista._step(prices["Fashionista"])
+                cAutoTech._step(prices["AutoTech"])
+
                 // Update the DOM
                 document.getElementById('stockPrices').innerHTML = "Last update: " + time + "\n\n" + JSON.stringify(prices, null, 2);
                 
@@ -51,8 +58,25 @@
     <h1>Random Events</h1>
     <pre id="randomEvents">Waiting for random events...</pre>
 
-    <div class="canvas-container" style="">
-        <h2>Stock market price of TechCorp</h2>
+    <div class="canvas-container">
+        <div id="cTechCorp" class="p5canvas">
+            <h2>TechCorp Value</h2>
+        </div>
+        <div id="cHealthPlus" class="p5canvas">
+            <h2>HealthPlus Value</h2>
+        </div>
+        <div id="cGreenEnergy" class="p5canvas">
+            <h2>GreenEnergy Value</h2>
+        </div>
+        <div id="cFoodie" class="p5canvas">
+            <h2>Foodie Value</h2>
+        </div>
+        <div id="cFashionista" class="p5canvas">
+            <h2>Fashionista Value</h2>
+        </div>
+        <div id="cAutoTech" class="p5canvas">
+            <h2>AutoTech Value</h2>
+        </div>
         <main></main> <!-- Apparently p5 canvas snaps to the <main>-tag. -->
     </div>
 </body>
