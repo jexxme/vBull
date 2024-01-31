@@ -14,12 +14,25 @@
         document.addEventListener('DOMContentLoaded', (event) => {
             var socket = io.connect('http://' + document.domain + ':' + location.port);
 
+            // Initial setup of the graphs
+            document.getElementsByClassName("p5canvas").forEach(element => {
+                // Get companies name from 'cname'-property
+                let companyName = element.getAttribute("cname");
+
+                if (companyName != null && companyName != "")
+                {
+                    let h2 = document.createElement("h2");
+                    element.appendChild(h2);
+                    h2.innerText = companyName + " Value";
+                }
+            });
+
             socket.on('stock_prices', function (prices) {
                 // Mesure time since last update
                 var now = new Date();
                 var time = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
                 
-                // Update all canvases with the new values
+                // Update all canvases with the new values (the variables are defined in the corresponding sketch ('/app/static/p5_sketches/example.js' at the moment))
                 cTechCorp._step(prices["TechCorp"])
                 cHealthPlus._step(prices["HealthPlus"])
                 cGreenEnergy._step(prices["GreenEnergy"])
@@ -59,24 +72,12 @@
     <pre id="randomEvents">Waiting for random events...</pre>
 
     <div class="canvas-container">
-        <div id="cTechCorp" class="p5canvas">
-            <h2>TechCorp Value</h2>
-        </div>
-        <div id="cHealthPlus" class="p5canvas">
-            <h2>HealthPlus Value</h2>
-        </div>
-        <div id="cGreenEnergy" class="p5canvas">
-            <h2>GreenEnergy Value</h2>
-        </div>
-        <div id="cFoodie" class="p5canvas">
-            <h2>Foodie Value</h2>
-        </div>
-        <div id="cFashionista" class="p5canvas">
-            <h2>Fashionista Value</h2>
-        </div>
-        <div id="cAutoTech" class="p5canvas">
-            <h2>AutoTech Value</h2>
-        </div>
+        <div id="cTechCorp" class="p5canvas" cname="TechCorp"></div>
+        <div id="cHealthPlus" class="p5canvas" cname="HealthPlus"></div>
+        <div id="cGreenEnergy" class="p5canvas" cname="GreenEnergy"></div>
+        <div id="cFoodie" class="p5canvas" cname="Foodie"></div>
+        <div id="cFashionista" class="p5canvas" cname="Fashionista"></div>
+        <div id="cAutoTech" class="p5canvas" cname="AutoTech"></div>
     </div>
 </body>
 

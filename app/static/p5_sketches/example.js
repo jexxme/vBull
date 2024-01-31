@@ -62,6 +62,7 @@ const s = (sketch) => {
 	}
 }
 
+// Actual creation of the graphs
 let cTechCorp = new p5(s, 'cTechCorp');
 let cHealthPlus = new p5(s, 'cHealthPlus');
 let cGreenEnergy = new p5(s, 'cGreenEnergy');

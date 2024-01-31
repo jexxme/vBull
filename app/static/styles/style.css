@@ -10,4 +10,5 @@
     flex-wrap: wrap;
     flex: 5;
     max-width: 1600px; /* One canvas is 500px (width) * 400px (height) */
+    margin: auto;
 }
