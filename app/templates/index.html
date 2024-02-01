@@ -33,12 +33,12 @@
                 var time = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
                 
                 // Update all canvases with the new values (the variables are defined in the corresponding sketch ('/app/static/p5_sketches/example.js' at the moment))
-                cTechCorp._step(prices["TechCorp"])
-                cHealthPlus._step(prices["HealthPlus"])
-                cGreenEnergy._step(prices["GreenEnergy"])
-                cFoodie._step(prices["Foodie"])
-                cFashionista._step(prices["Fashionista"])
-                cAutoTech._step(prices["AutoTech"])
+                cTechCorp._step(prices["TechCorp"]);
+                cHealthPlus._step(prices["HealthPlus"]);
+                cGreenEnergy._step(prices["GreenEnergy"]);
+                cFoodie._step(prices["Foodie"]);
+                cFashionista._step(prices["Fashionista"]);
+                cAutoTech._step(prices["AutoTech"]);
 
                 // Update the DOM
                 document.getElementById('stockPrices').innerHTML = "Last update: " + time + "\n\n" + JSON.stringify(prices, null, 2);
