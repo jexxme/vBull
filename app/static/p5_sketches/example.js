@@ -9,6 +9,7 @@ const s = (sketch) => {
 
 	sketch.setup = () => {
 		// Drawn once
+		sketch.points = [];
 		sketch.trend = 0;
 		sketch.x = 10;
 		sketch.lastY = -1; // If -1, this will start drawing the line at the first price given.
@@ -16,15 +17,57 @@ const s = (sketch) => {
 		
 		sketch.clear_graph();
 	}
-	  
+	
+	sketch.addpoint = (y_value) => {
+		sketch.points.push(y_value);
+		if (sketch.points.length > steps) {
+			sketch.points.shift(); // Drops the first element (index: 0)
+		}
+	}
+
 	// TODO: This function should later on be called by the backend and fed the trend. Right now the trend is calculated client-side.
 	sketch._step = (new_value) => {
-		if (sketch.lastY == -1) {
-			// If this is the first price given to the frontend, make sure just to draw a dot.
-			sketch.lastY = canvas_y - new_value;
-			sketch.square(sketch.x - (node_size / 2), canvas_y - new_value - (node_size / 2), node_size);
-			return;
-		}
+		sketch.addpoint(new_value);
+		sketch.clear_graph();
+
+		let i = 0;
+		sketch.points.forEach(y => {
+			i++;
+			
+			let x = step * i;
+
+			sketch.trend = sketch.lastY - y; // This 'canvas_y' needs to be done as a larger y-position is considered lower on the canvas in p5-land.
+			
+			// Check for y-delta to draw red or green
+			if (sketch.trend < 0) {
+				// Positive trend (green)
+				sketch.stroke(0, 255, 60);
+				sketch.fill(0, 255, 60);
+			} else {
+				// Negative trend (red)
+				sketch.stroke(255, 30, 60);
+				sketch.fill(255, 30, 60);
+			}
+			
+			if (i == 1)
+			{
+				sketch.stroke(255);
+				sketch.fill(255);
+			}
+
+			sketch.square(x - (node_size / 2), canvas_y - y - (node_size / 2), node_size);
+			if (sketch.lastY != -1 && i != 1) {
+				sketch.line(x - step, canvas_y - sketch.lastY, x, canvas_y - y); // Draw the actual line
+			}
+			sketch.fill(255);
+
+			// Prepare for next _step call
+			sketch.lastY = y;
+		});
+
+		return;
+
+		
 
 		if (sketch.x > steps * step) {
 		  // End of steps reached. Clear screen and start over.
@@ -33,21 +76,6 @@ const s = (sketch) => {
 		  return;
 		}
 	  
-		sketch.trend = canvas_y - new_value - sketch.lastY; // This 'canvas_y' needs to be done as a larger y-position is considered lower on the canvas in p5-land.
-	  
-		if (sketch.trend < 0) {
-		  // Positive trend (green)
-		  sketch.stroke(0, 255, 60);
-		  sketch.fill(0, 255, 60);
-		} else {
-		  // Negative trend (red)
-		  sketch.stroke(255, 30, 60);
-		  sketch.fill(255, 30, 60);
-		}
-	  
-		sketch.square(sketch.x + step - (node_size / 2), sketch.lastY + sketch.trend - (node_size / 2), node_size);
-		sketch.line(sketch.x, sketch.lastY, sketch.x + step, sketch.lastY + sketch.trend); // Draw the actual line
-		sketch.fill(255);
 	  
 		// Cleanup for the next step
 		sketch.x += step;
