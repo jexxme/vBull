@@ -1,50 +1,48 @@
 // Global Settings
 const canvas_x = 500;
 const canvas_y = 400;
-const step = 10;
-const steps = 48;
+const step_size = 10;
+const max_horizontal_steps = 48;
 const node_size = 4; // The squares in the graph
 
 const s = (sketch) => {
 
 	sketch.setup = () => {
-		// Drawn once
+		// Executes once when creating the graph
 		sketch.points = [];
 		sketch.trend = 0;
-		sketch.x = 10;
-		sketch.lastY = -1; // If -1, this will start drawing the line at the first price given.
-		sketch.createCanvas(canvas_x, canvas_y); // Canvas size
-		
+		sketch.lastY = -1;
+		sketch.createCanvas(canvas_x, canvas_y);
 		sketch.clear_graph();
 	}
 	
+
 	sketch.addpoint = (y_value) => {
 		sketch.points.push(y_value);
-		if (sketch.points.length > steps) {
+
+		if (sketch.points.length > max_horizontal_steps) {
 			sketch.points.shift(); // Drops the first element (index: 0)
 		}
 	}
 
-	// TODO: This function should later on be called by the backend and fed the trend. Right now the trend is calculated client-side.
+
 	sketch._step = (new_value) => {
 		sketch.addpoint(new_value);
 		sketch.clear_graph();
 
-		let i = 0;
+		let i = 1;
 		sketch.points.forEach(y => {
-			i++;
-			
-			let x = step * i;
+			let x = step_size * i;
 
-			sketch.trend = sketch.lastY - y; // This 'canvas_y' needs to be done as a larger y-position is considered lower on the canvas in p5-land.
+			sketch.trend = sketch.lastY - y;
 			
-			// Check for y-delta to draw red or green
+			// Bare in mind, trend is flipped here.
 			if (sketch.trend < 0) {
-				// Positive trend (green)
+				// Negative trend => green
 				sketch.stroke(0, 255, 60);
 				sketch.fill(0, 255, 60);
 			} else {
-				// Negative trend (red)
+				// Positive trend => red
 				sketch.stroke(255, 30, 60);
 				sketch.fill(255, 30, 60);
 			}
@@ -57,14 +55,16 @@ const s = (sketch) => {
 
 			sketch.square(x - (node_size / 2), canvas_y - y - (node_size / 2), node_size);
 			if (sketch.lastY != -1 && i != 1) {
-				sketch.line(x - step, canvas_y - sketch.lastY, x, canvas_y - y); // Draw the actual line
+				sketch.line(x - step_size, canvas_y - sketch.lastY, x, canvas_y - y); // Draw the actual line
 			}
 			sketch.fill(255);
 
 			// Prepare for next _step call
 			sketch.lastY = y;
+			i++;
 		});
 	}
+
 
 	sketch.clear_graph = () => {
 		sketch.background(20); // Background color
