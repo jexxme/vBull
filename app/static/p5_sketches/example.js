@@ -64,22 +64,6 @@ const s = (sketch) => {
 			// Prepare for next _step call
 			sketch.lastY = y;
 		});
-
-		return;
-
-		
-
-		if (sketch.x > steps * step) {
-		  // End of steps reached. Clear screen and start over.
-		  sketch.x = 10;
-		  sketch.clear_graph();
-		  return;
-		}
-	  
-	  
-		// Cleanup for the next step
-		sketch.x += step;
-		sketch.lastY += sketch.trend;
 	}
 
 	sketch.clear_graph = () => {
