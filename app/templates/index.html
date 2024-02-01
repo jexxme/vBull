@@ -42,11 +42,12 @@
 
                 // Update the DOM
                 document.getElementById('stockPrices').innerHTML = "Last update: " + time + "\n\n" + JSON.stringify(prices, null, 2);
-                
-                socket.on('random_event', function (data) {
-                    console.log('Random Event:', data.message);
-                    document.getElementById('randomEvents').innerHTML = data.message;
-                });
+
+            });
+
+            socket.on('random_event', function (data) {
+                console.log('Random Event:', data.message);
+                document.getElementById('randomEvents').innerHTML = data.message;
             });
         });
     </script>
