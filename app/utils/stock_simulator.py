@@ -13,15 +13,15 @@ class Stock:
 
     def update_price(self):
         # Basic trend and noise
-        base_trend = random.uniform(-1.5, 1.5)  # More dramatic changes
-        noise = random.uniform(-0.3, 0.3)
+        base_trend = random.uniform(-5, 5)  # More dramatic changes
+        noise = random.uniform(-1, 1)
 
         # Trend logic
         if self.trend == "bullish":
-            base_trend += random.uniform(0.5, 1.5)
+            base_trend += random.uniform(0.5, 5)
             self.trend_duration += 1
         elif self.trend == "bearish":
-            base_trend += random.uniform(-1.5, -0.5)
+            base_trend += random.uniform(-5, -0.5)
             self.trend_duration += 1
         else:
             # Chance to start a new trend
@@ -37,7 +37,7 @@ class Stock:
 
         # Ensure price doesn't go negative
         if self.price < 0.01:
-            self.price = 0.01
+            self.price = 1
 
         # Reset trend if it's been active for too long
         if self.trend_duration > 5:  # Trends last for 5 updates
@@ -55,6 +55,12 @@ class StockSimulator:
     def add_stock(self, name, initial_price, category):
         with self.lock:
             self.stocks[name] = Stock(name, initial_price, category)
+
+    def remove_stock(self, name):
+        with self.lock:
+            if name in self.stocks:
+                del self.stocks[name]
+    
 
     def update_stocks(self):
         with self.lock:
