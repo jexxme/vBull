@@ -3,36 +3,47 @@ import time
 import random
 from .market_logic import generate_random_event  # Import the function
 
-
 class Stock:
     def __init__(self, name, initial_price, category):
         self.name = name
         self.price = initial_price
         self.category = category
-        
+        self.trend = "neutral"
+        self.trend_duration = 0  # How long the trend has been active
+
     def update_price(self):
-        # Base trend and noise - more exaggerated
-        trend = random.uniform(-1.5, 1.5)  # Increased range for more dramatic changes
-        noise = random.uniform(-0.3, 0.3)  # Larger noise for more volatility
+        # Basic trend and noise
+        base_trend = random.uniform(-1.5, 1.5)  # More dramatic changes
+        noise = random.uniform(-0.3, 0.3)
 
-        # Increased chance and magnitude of major fluctuations
-        major_fluctuation_chance = 0.4  # 40% chance of a major fluctuation
-        major_increase = random.uniform(1.5, 4)  # More significant increase
-        major_decrease = random.uniform(-4, -1.5)  # More significant decrease
+        # Trend logic
+        if self.trend == "bullish":
+            base_trend += random.uniform(0.5, 1.5)
+            self.trend_duration += 1
+        elif self.trend == "bearish":
+            base_trend += random.uniform(-1.5, -0.5)
+            self.trend_duration += 1
+        else:
+            # Chance to start a new trend
+            if random.random() < 0.2:  # 20% chance to start a trend
+                if random.random() < 0.5:
+                    self.trend = "bullish"
+                else:
+                    self.trend = "bearish"
+                self.trend_duration = 0
 
-        # Determine if a major fluctuation occurs
-        if random.random() < major_fluctuation_chance:
-            if random.choice([True, False]):  # Randomly choose between rise and fall
-                trend += major_increase
-            else:
-                trend += major_decrease
-            
-        # Update price
-        self.price += trend + noise
+        # Apply changes
+        self.price += base_trend + noise
 
-        # Ensure the price doesn't go negative
-        if self.price < 0:
+        # Ensure price doesn't go negative
+        if self.price < 0.01:
             self.price = 0.01
+
+        # Reset trend if it's been active for too long
+        if self.trend_duration > 5:  # Trends last for 5 updates
+            self.trend = "neutral"
+            self.trend_duration = 0
+
 
 
 
