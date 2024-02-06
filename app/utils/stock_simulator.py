@@ -35,9 +35,10 @@ class Stock:
         # Apply changes
         self.price += base_trend + noise
 
-        # Ensure price doesn't go negative
-        if self.price < 0.01:
-            self.price = 1
+        # Cap price at 0
+        if self.price < 0:
+            self.price = 0
+
 
         # Reset trend if it's been active for too long
         if self.trend_duration > 5:  # Trends last for 5 updates
@@ -55,12 +56,6 @@ class StockSimulator:
     def add_stock(self, name, initial_price, category):
         with self.lock:
             self.stocks[name] = Stock(name, initial_price, category)
-
-    def remove_stock(self, name):
-        with self.lock:
-            if name in self.stocks:
-                del self.stocks[name]
-    
 
     def update_stocks(self):
         with self.lock:
