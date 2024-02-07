@@ -36,16 +36,10 @@
                             label: companyName + " Value",
                             data: [],
                             borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1,
+                            borderWidth: 3,
                             radius: 0,
                             fill: false,
-                            tension: 0.1
                         }]
-                    },
-                    plugins: {
-                        legend: {
-                            display: false,
-                        }
                     },
                     options: {
                         scales: {
@@ -59,6 +53,19 @@
 
 
                             }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true, // Ensures the legend is displayed
+                                labels: {
+                                    color: 'rgba(75, 192, 192, 1)', // Sets the text color for labels
+                                    boxWidth: 0, // Hides the colored box next to the label
+                                    font: {
+                                        size: 30 // Sets the font size for labels   
+                                    }
+                                }
+
+                            }
                         }
                     }
                 };
@@ -68,7 +75,6 @@
             }
 
             Chart.defaults.font.size = 24;
-
 
             // Initialize charts for each company
             ["TechCorp", "HealthPlus", "GreenEnergy", "Foodie", "Fashionista", "AutoTech"].forEach(companyName => {
@@ -110,9 +116,9 @@
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(800px, 1fr));
         /* Adjust minmax values as needed */
-        gap: 20px;
+        gap: 30px;
         /* Space between charts */
-        padding: 20px;
+        padding: 30px;
         /* Padding around the grid container */
     }
 
