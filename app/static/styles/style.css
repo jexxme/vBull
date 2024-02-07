@@ -1,3 +1,8 @@
+body {
+    background: #232323;
+    color: white;
+}
+
 .p5canvas {
     width: fit-content;
     display: inline-block;
