@@ -11,6 +11,15 @@ from .utils.market_logic import generate_random_event
 def index():
     return render_template('index.html')
 
+
+@app.route('/chartjs')
+def chartjs():
+    return render_template('chartjs.html')
+
+@app.route('/chartjs_fin')
+def chartjs_fin():
+    return render_template('chartjs_fin.html')
+
 # Initialize your StockSimulator and add some stocks
 stock_simulator = StockSimulator()
 stock_simulator.add_stock('TechCorp', 100, 'Technology')

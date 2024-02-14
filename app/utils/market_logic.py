@@ -13,7 +13,7 @@ def generate_random_event(stock_simulator, socketio):
         'Energy': [("New energy source discovered!", 1.4), ("Energy shortage!", 0.6)],
         'Food': [("New food craze!", 1.5), ("Food shortage!", 0.5)],
         'Fashion': [("New fashion trend!", 1.6), ("Fashion faux pas!", 0.4)],
-        'Automotive': [("New car model!", 1.7), ("Car recall!", 0.3)]
+        'Automotive': [("New car model!", 1.2), ("Car recall!", 0.3)]
     }
 
     category = random.choice(list(events.keys()))

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Stock Market Simulator</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"
+        integrity="sha384-mZLF4UVrpi/QTWPA7BjNPEnkIfRFn4ZEO3Qt/HFklTJBj/gBOV8G3HcKn4NfQblz"
+        crossorigin="anonymous"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css"> <!-- Update the path as necessary -->
+</head>
+
+<body>
+    <h1>Stock Market Simulator</h1>
+    <pre id="priceUpdates">Waiting for price updates...</pre>
+    <div id="randomEvents" class="info">Random Event: N/A</div>
+    <div id="charts-container"></div> <!-- Container for charts -->
+
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', (event) => {
+            var socket = io.connect('http://' + document.domain + ':' + location.port);
+            var chartConfigs = {}; // Object to hold our chart instances
+
+            // Function to initialize a Chart.js line chart
+            function initializeChart(companyName) {
+                const canvas = document.createElement('canvas');
+                document.getElementById('charts-container').appendChild(canvas); // Append canvas to the charts container
+
+
+                const chartConfig = {
+                    type: 'line',
+                    data: {
+                        datasets: [{
+                            label: companyName + " Value",
+                            data: [],
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 3,
+                            radius: 0,
+                            fill: false,
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            x: {
+                                type: 'linear',
+
+
+                            },
+                            y: {
+                                type: 'linear',
+
+
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true, // Ensures the legend is displayed
+                                labels: {
+                                    color: 'rgba(75, 192, 192, 1)', // Sets the text color for labels
+                                    boxWidth: 0, // Hides the colored box next to the label
+                                    font: {
+                                        size: 30 // Sets the font size for labels   
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                };
+
+
+                chartConfigs[companyName] = new Chart(canvas, chartConfig); // Store the chart instance for later use
+            }
+
+            Chart.defaults.font.size = 24;
+
+            // Initialize charts for each company
+            ["TechCorp", "HealthPlus", "GreenEnergy", "Foodie", "Fashionista", "AutoTech"].forEach(companyName => {
+                initializeChart(companyName);
+            });
+
+            socket.on('stock_prices', function (prices) {
+                // Measure time since last update
+                var now = new Date();
+                var time = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+
+                // Update all charts with the new values
+                Object.keys(prices).forEach(companyName => {
+                    const chart = chartConfigs[companyName];
+                    if (chart) {
+                        // Add new data point to the chart
+                        chart.data.datasets[0].data.push({
+                            x: chart.data.datasets[0].data.length, // Assuming each update is a new point sequentially
+                            y: prices[companyName]
+                        });
+                        chart.update();
+                    }
+                });
+
+                // Update the DOM
+                document.getElementById('priceUpdates').innerHTML = "Last update: " + time + "\n\n" + JSON.stringify(prices, null, 2);
+            });
+
+            socket.on('random_event', function (data) {
+                console.log('Random Event:', data.message);
+                document.getElementById('randomEvents').innerHTML = data.message;
+            });
+        });
+    </script>
+</body>
+
+<style>
+    #charts-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(800px, 1fr));
+        /* Adjust minmax values as needed */
+        gap: 30px;
+        /* Space between charts */
+        padding: 30px;
+        /* Padding around the grid container */
+    }
+
+    canvas {
+        width: 100% !important;
+        /* Ensure canvas elements fill their container */
+        height: auto !important;
+        /* Adjust height automatically */
+    }
+</style>
+
+</html>
