@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Financial Chart Example</title>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+    <!-- Luxon -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/luxon/3.4.4/luxon.min.js"
+        integrity="sha512-dUlSLLkxslGILhPdCkALwk4szPhp3xmZIKFtlUD+O9Lslq41Aksmdt5OGqpomDoT4FsCUH70jQU8ezZHI3v1RQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- luxon adapter -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-adapter-luxon/0.2.1/chartjs-adapter-luxon.min.js"
+        integrity="sha512-7OAqY8fMTYheWYbBkIFSrme9s5PZSyprCwaE9hJfGkDqpveJytJOMjk8gRNDLHzEijRSzUhAvNcNZrDQr7JyWQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- ChartJS Financ. -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@0.1.1/dist/chartjs-chart-financial.min.js"></script>
+    <!-- chartjs streaming -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/chartjs-plugin-streaming@2.0.0/dist/chartjs-plugin-streaming.min.js"></script>
+
+
+</head>
+
+<body>
+    <div>
+        <canvas id="myChart"></canvas>
+    </div>
+
+
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', (event) => {
+            var socket = io.connect('http://' + document.domain + ':' + location.port);
+            var chartConfigs = {}; // Object to hold our chart instances
+
+            // Initialize charts for each company
+            ["TechCorp", "HealthPlus", "GreenEnergy", "Foodie", "Fashionista", "AutoTech"].forEach(companyName => {
+                initializeChart(companyName);
+            });
+
+            socket.on('stock_prices', function (prices) {
+                // Measure time since last update
+                var now = new Date();
+                var time = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+
+                // Update all charts with the new values
+                Object.keys(prices).forEach(companyName => {
+                    const chart = chartConfigs[companyName];
+                    if (chart) {
+                        // Add new data point to the chart
+                        chart.data.datasets[0].data.push({
+                            x: chart.data.datasets[0].data.length, // Assuming each update is a new point sequentially
+                            y: prices[companyName]
+                        });
+                        chart.update();
+                    }
+                });
+
+            });
+
+
+        });
+
+        // Utility functions (e.g., Utils.rand) should be defined or included here.
+        // For simplicity, replace Utils.rand(-0.5, 0.5) with a simple random function
+        function rand(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        const data = {
+            datasets: [{
+                data: []
+            }]
+        };
+
+        const onRefresh = chart => {
+            const _data = chart.data.datasets[0].data;
+            let t = Date.now();
+            let last;
+
+            t -= t % 5000;
+            if (_data.length === 0) {
+                _data.push({ x: t - 5000, o: 99, h: 101, l: 98, c: 100 });
+            }
+            last = _data[_data.length - 1];
+            if (t !== last.x) {
+                const c = last.c;
+                last = { x: t, o: c, h: c, l: c, c: c };
+                _data.push(last);
+            }
+            last.c = +(last.c + rand(-0.5, 0.5)).toFixed(2);
+            last.h = +Math.max(last.h, last.c).toFixed(2);
+            last.l = +Math.min(last.l, last.c).toFixed(2);
+        };
+
+        const config = {
+            type: 'candlestick',
+            data: data,
+            options: {
+                scales: {
+                    x: {
+                        type: 'realtime',
+                        realtime: {
+                            duration: 120000,
+                            refresh: 500,
+                            delay: 0,
+                            onRefresh: onRefresh
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false
+                },
+                animation: false,  // disable animations
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    annotation: false,
+                    datalabels: false,
+                    zoom: false,
+                    tooltip: false,
+                    streaming: {
+                        frameRate: 30
+                    }
+                }
+
+            }
+        };
+
+        window.onload = function () {
+            const ctx = document.getElementById('myChart').getContext('2d');
+            const myChart = new Chart(ctx, config);
+        };
+    </script>
+</body>
+
+</html>
